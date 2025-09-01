@@ -71,9 +71,12 @@ public class HDHomeRun(IConfigurationManager config, IHttpClientFactory httpClie
     }
 
     private async Task<IEnumerable<ListingChannel>> LoadListings(ListingsProviderInfo info, string ip, CancellationToken cancellationToken) {
+        if (!ip.StartsWith("http://")) {
+            ip = "http://" + ip;
+        }
         using HttpClient httpClient = httpClientFactory.CreateClient(NamedClient.Default);
         DiscoverResponse? discovery;
-        using (HttpResponseMessage response = await httpClient.GetAsync("http://" + ip + "/discover.json", HttpCompletionOption.ResponseContentRead, cancellationToken)) {
+        using (HttpResponseMessage response = await httpClient.GetAsync(ip + "/discover.json", HttpCompletionOption.ResponseContentRead, cancellationToken)) {
             discovery = await response.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<DiscoverResponse>(cancellationToken);
             if (discovery == null || discovery.DeviceAuth == null || discovery.LineupURL == null) {
                 logger.LogWarning("Unable to connect to HDHomeRun device at {Ip}", ip);
