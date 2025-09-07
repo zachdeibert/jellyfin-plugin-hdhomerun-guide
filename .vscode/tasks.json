@@ -10,6 +10,7 @@
             "dependsOn": [
                 "build",
                 "make-plugin-dirs",
+                "copy-hdhomerun-dvr",
                 "copy-hdhomerun-guide"
             ]
         },
@@ -40,13 +41,33 @@
                 "args": [
                     "-Force",
                     "-Path",
-                    "${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide/"
+                    "${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunDVR/,${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide/"
                 ]
             },
             "linux": {
                 "args": [
                     "-p",
+                    "${config:jellyfinLinuxDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunDVR/",
                     "${config:jellyfinLinuxDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide/"
+                ]
+            }
+        },
+        {
+            // Copy the plugin dll to the jellyfin plugin install path
+            "label": "copy-hdhomerun-dvr",
+            "type": "shell",
+            "command": "cp",
+            "windows": {
+                "args": [
+                    "hdhomerun-dvr/bin/Debug/net8.0/publish/Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.dll",
+                    "${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunDVR/"
+                ]
+            },
+            "linux": {
+                "args": [
+                    "-r",
+                    "hdhomerun-dvr/bin/Debug/net8.0/publish/Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.dll",
+                    "${config:jellyfinLinuxDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunDVR/"
                 ]
             }
         },
