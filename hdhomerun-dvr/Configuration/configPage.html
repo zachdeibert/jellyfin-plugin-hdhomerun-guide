@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>HDHomeRun DVR</title>
+</head>
+
+<body>
+    <div class="page pluginConfigurationPage type-interior" data-require="emby-button" data-role="page"
+        id="HDHomeRunDVRConfigPage">
+        <div data-role="content">
+            <div class="content-primary">
+                <h1>HDHomeRun DVR</h1>
+                <form id="HDHomeRunDVRConfigForm">
+                    <div>
+                        <button class="block emby-button raised" id="HDHomeRunDVRSyncButton" is="emby-button"
+                            type="button">
+                            <span>Sync Now</span>
+                        </button>
+                        <progress id="HDHomeRunDVRSyncProgress" min="0" max="100" style="width: 100%;"></progress>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).on("pageshow", "#HDHomeRunDVRConfigPage", function () {
+                TaskButton({
+                    "button": this.querySelector("#HDHomeRunDVRSyncButton"),
+                    "mode": "on",
+                    "progressElem": this.querySelector("#HDHomeRunDVRSyncProgress"),
+                    "taskKey": "Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.SyncTask",
+                });
+            }).on("pagehide", "#HDHomeRunDVRConfigPage", function () {
+                TaskButton({
+                    "button": this.querySelector("#HDHomeRunDVRSyncButton"),
+                    "mode": "off",
+                    "progressElem": this.querySelector("#HDHomeRunDVRSyncProgress"),
+                    "taskKey": "Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.SyncTask",
+                });
+            });
+        </script>
+    </div>
+</body>
+
+</html>

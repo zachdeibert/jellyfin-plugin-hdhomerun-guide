@@ -15,7 +15,12 @@ public class SyncTask : IScheduledTask {
 
     public string Name => "Sync HDHomeRun DVR";
 
-    public Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken) => Task.CompletedTask;
+    public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken) {
+        for (double i = 0; i < 100; ++i) {
+            progress.Report(i);
+            await Task.Delay(100, cancellationToken);
+        }
+    }
 
     public IEnumerable<TaskTriggerInfo> GetDefaultTriggers() => [
         new TaskTriggerInfo {

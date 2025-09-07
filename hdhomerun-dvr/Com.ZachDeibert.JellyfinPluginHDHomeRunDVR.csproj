@@ -9,4 +9,8 @@
         <PackageReference Include="Jellyfin.Controller" Version="10.10.7" />
         <PackageReference Include="Jellyfin.Model" Version="10.10.7" />
     </ItemGroup>
+    <ItemGroup>
+        <None Remove="Configuration\configPage.html" />
+        <EmbeddedResource Include="Configuration\configPage.html" />
+    </ItemGroup>
 </Project>
