@@ -9,8 +9,8 @@
             "dependsOrder": "sequence",
             "dependsOn": [
                 "build",
-                "make-plugin-dir",
-                "copy-dll"
+                "make-plugin-dirs",
+                "copy-hdhomerun-guide"
             ]
         },
         {
@@ -21,7 +21,7 @@
             "args": [
                 "publish",
                 "--configuration=Debug",
-                "${workspaceFolder}/${config:pluginName}.sln",
+                "${workspaceFolder}/JellyfinPlugins.sln",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -32,40 +32,40 @@
             "problemMatcher": "$msCompile"
         },
         {
-            // Ensure the plugin directory exists before trying to use it
-            "label": "make-plugin-dir",
+            // Ensure the plugin directories exist before trying to use them
+            "label": "make-plugin-dirs",
             "type": "shell",
             "command": "mkdir",
             "windows": {
                 "args": [
                     "-Force",
                     "-Path",
-                    "${config:jellyfinWindowsDataDir}/plugins/${config:pluginName}/"
+                    "${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide/"
                 ]
             },
             "linux": {
                 "args": [
                     "-p",
-                    "${config:jellyfinLinuxDataDir}/plugins/${config:pluginName}/"
+                    "${config:jellyfinLinuxDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide/"
                 ]
             }
         },
         {
             // Copy the plugin dll to the jellyfin plugin install path
-            "label": "copy-dll",
+            "label": "copy-hdhomerun-guide",
             "type": "shell",
             "command": "cp",
             "windows": {
                 "args": [
-                    "./bin/Debug/net8.0/publish/${config:pluginName}.dll",
-                    "${config:jellyfinWindowsDataDir}/plugins/${config:pluginName}/"
+                    "hdhomerun-guide/bin/Debug/net8.0/publish/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide.dll",
+                    "${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide/"
                 ]
             },
             "linux": {
                 "args": [
                     "-r",
-                    "./bin/Debug/net8.0/publish/${config:pluginName}.dll",
-                    "${config:jellyfinLinuxDataDir}/plugins/${config:pluginName}/"
+                    "hdhomerun-guide/bin/Debug/net8.0/publish/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide.dll",
+                    "${config:jellyfinLinuxDataDir}/plugins/Com.ZachDeibert.JellyfinPluginHDHomeRunGuide/"
                 ]
             }
         },
