@@ -3,6 +3,7 @@ namespace Com.ZachDeibert.JellyfinPluginHDHomeRunDVR;
 using System;
 using System.Collections.Generic;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.Dtos;
@@ -12,7 +13,7 @@ using MediaBrowser.Model.LiveTv;
 using MediaBrowser.Model.Tasks;
 using Microsoft.Extensions.Logging;
 
-public class SyncTask(IConfigurationManager config, IHttpClientFactory httpClientFactory, ILogger<SyncTask> logger) : IScheduledTask {
+public class SyncTask(IConfigurationManager config, IHttpClientFactory httpClientFactory, ILogger<DownloadManager> downloadLogger, ILogger<SyncTask> logger) : IScheduledTask {
     public string Category => "Live TV";
 
     public string Description => "Downloads new recordings from connected HDHomeRun DVRs";
@@ -23,9 +24,30 @@ public class SyncTask(IConfigurationManager config, IHttpClientFactory httpClien
 
     public async Task ExecuteAsync(IProgress<double> progress, CancellationToken cancellationToken) {
         using HttpClient httpClient = httpClientFactory.CreateClient(NamedClient.Default);
+        DownloadManager downloadManager = new(httpClient, downloadLogger);
         foreach ((StorageResponse, EpisodesResponse) episode in await GetEpisodes(httpClient, cancellationToken)) {
-            logger.LogInformation("Found {SeriesName} episode {EpisodeNumber} to download from {Url}", episode.Item1.Title, episode.Item2.EpisodeNumber, episode.Item2.PlayURL);
+            string? dir = episode.Item1.Category switch {
+                "movie" => Plugin.Instance?.Configuration.MovieRecordingPath,
+                "series" => Plugin.Instance?.Configuration.SeriesRecordingPath,
+                _ => null,
+            };
+            if (dir == null) {
+                logger.LogError("Series {SeriesName} has unknown type {Category}", episode.Item1.Title, episode.Item1.Category);
+            } else if (episode.Item2.PlayURL == null) {
+                logger.LogError("Series {SeriesName} episode {EpisodeNumber} has no download URL", episode.Item1.Title, episode.Item2.EpisodeNumber);
+            } else if (episode.Item2.RecordEndTime == 0 || episode.Item2.RecordEndTime + 30 > DateTimeOffset.UtcNow.ToUnixTimeSeconds()) {
+                logger.LogInformation("Not downloading {SeriesName} episode {EpisodeNumber} because it is still recording", episode.Item1.Title, episode.Item2.EpisodeNumber);
+            } else {
+                logger.LogInformation("Found {SeriesName} episode {EpisodeNumber} to download from {Url}", episode.Item1.Title, episode.Item2.EpisodeNumber, episode.Item2.PlayURL);
+                string seriesDir = Path.Join(dir, string.Concat(string.Format("{0} ({1})", episode.Item1.Title, episode.Item1.SeriesID).Split(Path.GetInvalidFileNameChars())));
+                _ = Directory.CreateDirectory(seriesDir);
+                string target = Path.Join(seriesDir, episode.Item2.Filename ?? string.Format("{0} ({1})", episode.Item2.Title, episode.Item2.EpisodeNumber));
+                await File.WriteAllTextAsync(target + ".storage.json", JsonSerializer.Serialize(episode.Item1), cancellationToken);
+                await File.WriteAllTextAsync(target + ".episode.json", JsonSerializer.Serialize(episode.Item2), cancellationToken);
+                await downloadManager.Add(episode.Item2.PlayURL, target, cancellationToken);
+            }
         }
+        await downloadManager.Run(progress, cancellationToken);
     }
 
     public IEnumerable<TaskTriggerInfo> GetDefaultTriggers() => [
