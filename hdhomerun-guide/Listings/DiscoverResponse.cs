@@ -10,4 +10,8 @@ internal class DiscoverResponse {
     public string? BaseURL { get; set; }
     public string? LineupURL { get; set; }
     public int TunerCount { get; set; }
+    public string? StorageID { get; set; }
+    public string? StorageURL { get; set; }
+    public long TotalSpace { get; set; }
+    public long FreeSpace { get; set; }
 }
