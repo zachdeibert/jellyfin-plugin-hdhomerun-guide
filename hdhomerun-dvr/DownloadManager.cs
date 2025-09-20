@@ -14,10 +14,27 @@ public class DownloadManager(HttpClient httpClient, ILogger<DownloadManager> log
     }
 
     public async Task Run(IProgress<double> progress, CancellationToken cancellationToken) {
+        long downloaded = 0;
+        byte[] buffer = new byte[16384];
+        DateTime lastLog = DateTime.Now;
         foreach ((string, string, long) download in Downloads) {
             logger.LogInformation("Downloading {Url} to {Path} ({Size} MiB)...", download.Item1, download.Item2, download.Item3 / (1024 * 1024));
-            await Task.Delay(100, cancellationToken);
+            using HttpResponseMessage response = await httpClient.GetAsync(download.Item1, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            using Stream input = await response.Content.ReadAsStreamAsync(cancellationToken);
+            using FileStream output = File.OpenWrite(download.Item2);
+            while (true) {
+                int count = await input.ReadAsync(buffer, cancellationToken);
+                if (count <= 0) {
+                    break;
+                }
+                await output.WriteAsync(buffer.AsMemory(0, count), cancellationToken);
+                downloaded += count;
+                progress.Report(downloaded * 100.0 / TotalSize);
+                if (DateTime.Now - lastLog > TimeSpan.FromSeconds(10)) {
+                    lastLog += TimeSpan.FromSeconds(10);
+                    logger.LogDebug("Downloaded {Done} / {Total} MiB", downloaded / (1024 * 1024), TotalSize / (1024 * 1024));
+                }
+            }
         }
-        progress.Report(100);
     }
 }
