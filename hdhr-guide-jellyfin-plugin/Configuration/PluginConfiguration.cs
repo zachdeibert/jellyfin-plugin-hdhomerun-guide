@@ -1,4 +1,4 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunGuide.Configuration;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.Configuration;
 
 using MediaBrowser.Model.Plugins;
 

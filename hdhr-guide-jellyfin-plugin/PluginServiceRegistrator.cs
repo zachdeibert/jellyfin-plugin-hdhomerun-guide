@@ -1,7 +1,7 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunGuide;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin;
 
-using Com.ZachDeibert.JellyfinPluginHDHomeRunGuide.Configuration;
-using Com.ZachDeibert.JellyfinPluginHDHomeRunGuide.Listings;
+using Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.Configuration;
+using Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.Listings;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Plugins;
 using Microsoft.Extensions.DependencyInjection;

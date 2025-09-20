@@ -1,6 +1,6 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunGuide;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin;
 
-using Com.ZachDeibert.JellyfinPluginHDHomeRunGuide.Configuration;
+using Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.Configuration;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Serialization;

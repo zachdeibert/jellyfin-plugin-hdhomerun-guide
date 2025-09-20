@@ -1,4 +1,4 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunDVR;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin;
 
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.Dtos;
+using Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.Dtos;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Model.LiveTv;

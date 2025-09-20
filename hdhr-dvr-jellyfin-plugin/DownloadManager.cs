@@ -1,4 +1,4 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunDVR;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin;
 
 using Microsoft.Extensions.Logging;
 

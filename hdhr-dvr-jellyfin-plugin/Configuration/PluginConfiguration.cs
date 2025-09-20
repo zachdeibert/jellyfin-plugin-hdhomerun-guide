@@ -1,4 +1,4 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.Configuration;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.Configuration;
 
 using MediaBrowser.Model.Plugins;
 

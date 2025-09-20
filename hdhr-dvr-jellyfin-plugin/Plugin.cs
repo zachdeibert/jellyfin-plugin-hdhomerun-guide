@@ -1,7 +1,7 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunDVR;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin;
 
 using System.Collections.Generic;
-using Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.Configuration;
+using Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.Configuration;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Plugins;

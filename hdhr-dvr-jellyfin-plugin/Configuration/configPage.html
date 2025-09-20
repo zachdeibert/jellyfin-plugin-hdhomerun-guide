@@ -8,20 +8,20 @@
 
 <body>
     <div class="page pluginConfigurationPage type-interior" data-require="emby-button" data-role="page"
-        id="HDHomeRunDVRConfigPage">
+        id="HdhrDvrConfigPage">
         <div data-role="content">
             <div class="content-primary">
                 <h1>HDHomeRun DVR</h1>
-                <form id="HDHomeRunDVRConfigForm">
+                <form id="HdhrDvrConfigForm">
                     <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="HDHomeRunDVRMovieRecordingPath">
+                        <label class="inputLabel inputLabelUnfocused" for="HdhrDvrMovieRecordingPath">
                             Movie recording path
                         </label>
                         <div style="align-items: center; display: flex;">
                             <div style="flex-grow: 1;">
-                                <input id="HDHomeRunDVRMovieRecordingPath" is="emby-input" type="text" />
+                                <input id="HdhrDvrMovieRecordingPath" is="emby-input" type="text" />
                             </div>
-                            <button class="emby-input-iconbutton" id="HDHomeRunDVRMovieRecordingPathSelect"
+                            <button class="emby-input-iconbutton" id="HdhrDvrMovieRecordingPathSelect"
                                 is="paper-icon-button-light" type="button">
                                 <span class="material-icons search"></span>
                             </button>
@@ -32,25 +32,24 @@
                         </div>
                     </div>
                     <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="HDHomeRunDVRSeriesRecordingPath">
+                        <label class="inputLabel inputLabelUnfocused" for="HdhrDvrSeriesRecordingPath">
                             Series recording path
                         </label>
                         <div style="align-items: center; display: flex;">
                             <div style="flex-grow: 1;">
-                                <input id="HDHomeRunDVRSeriesRecordingPath" is="emby-input" type="text" />
+                                <input id="HdhrDvrSeriesRecordingPath" is="emby-input" type="text" />
                             </div>
-                            <button class="emby-input-iconbutton" id="HDHomeRunDVRSeriesRecordingPathSelect"
+                            <button class="emby-input-iconbutton" id="HdhrDvrSeriesRecordingPathSelect"
                                 is="paper-icon-button-light" type="button">
                                 <span class="material-icons search"></span>
                             </button>
                         </div>
                     </div>
                     <div>
-                        <button class="block emby-button raised" id="HDHomeRunDVRSyncButton" is="emby-button"
-                            type="button">
+                        <button class="block emby-button raised" id="HdhrDvrSyncButton" is="emby-button" type="button">
                             <span>Sync Now</span>
                         </button>
-                        <progress id="HDHomeRunDVRSyncProgress" min="0" max="100" style="width: 100%;"></progress>
+                        <progress id="HdhrDvrSyncProgress" min="0" max="100" style="width: 100%;"></progress>
                     </div>
                     <div>
                         <button class="block button-submit emby-button raised" is="emby-button" type="submit">
@@ -62,37 +61,37 @@
         </div>
         <script type="text/javascript">
             const pluginId = "EB540661-5435-406D-8A92-F7D8474D247C";
-            $(document).on("pageshow", "#HDHomeRunDVRConfigPage", function () {
+            $(document).on("pageshow", "#HdhrDvrConfigPage", function () {
                 Dashboard.showLoadingMsg();
                 TaskButton({
-                    "button": this.querySelector("#HDHomeRunDVRSyncButton"),
+                    "button": this.querySelector("#HdhrDvrSyncButton"),
                     "mode": "on",
-                    "progressElem": this.querySelector("#HDHomeRunDVRSyncProgress"),
-                    "taskKey": "Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.SyncTask",
+                    "progressElem": this.querySelector("#HdhrDvrSyncProgress"),
+                    "taskKey": "Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.SyncTask",
                 });
                 ApiClient.getPluginConfiguration(pluginId).then(config => {
-                    this.querySelector("#HDHomeRunDVRMovieRecordingPath").value = config.MovieRecordingPath;
-                    this.querySelector("#HDHomeRunDVRSeriesRecordingPath").value = config.SeriesRecordingPath;
+                    this.querySelector("#HdhrDvrMovieRecordingPath").value = config.MovieRecordingPath;
+                    this.querySelector("#HdhrDvrSeriesRecordingPath").value = config.SeriesRecordingPath;
                     Dashboard.hideLoadingMsg();
                 });
-            }).on("submit", "#HDHomeRunDVRConfigForm", function (ev) {
+            }).on("submit", "#HdhrDvrConfigForm", function (ev) {
                 Dashboard.showLoadingMsg();
                 ApiClient.getPluginConfiguration(pluginId).then(config => {
-                    config.MovieRecordingPath = this.querySelector("#HDHomeRunDVRMovieRecordingPath").value;
-                    config.SeriesRecordingPath = this.querySelector("#HDHomeRunDVRSeriesRecordingPath").value;
+                    config.MovieRecordingPath = this.querySelector("#HdhrDvrMovieRecordingPath").value;
+                    config.SeriesRecordingPath = this.querySelector("#HdhrDvrSeriesRecordingPath").value;
                     ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
                 });
                 ev.preventDefault();
                 return false;
-            }).on("pagehide", "#HDHomeRunDVRConfigPage", function () {
+            }).on("pagehide", "#HdhrDvrConfigPage", function () {
                 TaskButton({
-                    "button": this.querySelector("#HDHomeRunDVRSyncButton"),
+                    "button": this.querySelector("#HdhrDvrSyncButton"),
                     "mode": "off",
-                    "progressElem": this.querySelector("#HDHomeRunDVRSyncProgress"),
-                    "taskKey": "Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.SyncTask",
+                    "progressElem": this.querySelector("#HdhrDvrSyncProgress"),
+                    "taskKey": "Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.SyncTask",
                 });
             });
-            ["HDHomeRunDVRMovieRecordingPath", "HDHomeRunDVRSeriesRecordingPath"].forEach(id => {
+            ["HdhrDvrMovieRecordingPath", "HdhrDvrSeriesRecordingPath"].forEach(id => {
                 $(document).on("click", "#" + id + "Select", () => {
                     const picker = new DirectoryBrowser();
                     picker.show({

@@ -1,4 +1,4 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.Dtos;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.Listings;
 
 internal class DiscoverResponse {
     public string? FriendlyName { get; set; }

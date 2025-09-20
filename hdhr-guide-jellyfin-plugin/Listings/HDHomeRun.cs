@@ -1,4 +1,4 @@
-namespace Com.ZachDeibert.JellyfinPluginHDHomeRunGuide.Listings;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.Listings;
 
 using System;
 using System.Collections.Generic;

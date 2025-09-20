@@ -2,8 +2,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.ZachDeibert.JellyfinPluginHDHomeRunDVR", "hdhomerun-dvr\Com.ZachDeibert.JellyfinPluginHDHomeRunDVR.csproj", "{39256FA2-B8E3-47EB-ADDC-FE2BE2E88BEF}"
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.ZachDeibert.JellyfinPluginHDHomeRunGuide", "hdhomerun-guide\Com.ZachDeibert.JellyfinPluginHDHomeRunGuide.csproj", "{5A733CA5-E84B-4298-103B-8848A2805706}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin", "hdhr-dvr-jellyfin-plugin\Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.csproj", "{39256FA2-B8E3-47EB-ADDC-FE2BE2E88BEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin", "hdhr-guide-jellyfin-plugin\Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.csproj", "{5A733CA5-E84B-4298-103B-8848A2805706}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
