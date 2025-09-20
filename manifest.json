@@ -11,7 +11,7 @@
                 "checksum": "9961e2a751c716888583a009ef513abb",
                 "changelog": "Fix checksum",
                 "targetAbi": "10.10.7.0",
-                "sourceUrl": "https://github.com/zachdeibert/jellyfin-plugins/releases/download/hdhomerun-guide%2F1.0.1.0/jellyfin-plugin-hdhomerun-guide_1.0.1.0.zip",
+                "sourceUrl": "https://github.com/zachdeibert/media-tools/releases/download/hdhomerun-guide%2F1.0.1.0/jellyfin-plugin-hdhomerun-guide_1.0.1.0.zip",
                 "timestamp": "2025-09-01T17:40:23Z",
                 "version": "1.0.1.1"
             },
@@ -19,7 +19,7 @@
                 "checksum": "25f2dc9e4c465077a006cd978252fd3e",
                 "changelog": "Fix HDHomeRun IPs starting with 'http://'",
                 "targetAbi": "10.10.7.0",
-                "sourceUrl": "https://github.com/zachdeibert/jellyfin-plugins/releases/download/hdhomerun-guide%2F1.0.1.0/jellyfin-plugin-hdhomerun-guide_1.0.1.0.zip",
+                "sourceUrl": "https://github.com/zachdeibert/media-tools/releases/download/hdhomerun-guide%2F1.0.1.0/jellyfin-plugin-hdhomerun-guide_1.0.1.0.zip",
                 "timestamp": "2025-09-01T17:40:23Z",
                 "version": "1.0.1.0"
             },
@@ -27,7 +27,7 @@
                 "checksum": "25f2dc9e4c465077a006cd978252fd3e",
                 "changelog": "Initial version",
                 "targetAbi": "10.10.7.0",
-                "sourceUrl": "https://github.com/zachdeibert/jellyfin-plugins/releases/download/hdhomerun-guide%2F1.0.0.0/jellyfin-plugin-hdhomerun-guide_1.0.0.0.zip",
+                "sourceUrl": "https://github.com/zachdeibert/media-tools/releases/download/hdhomerun-guide%2F1.0.0.0/jellyfin-plugin-hdhomerun-guide_1.0.0.0.zip",
                 "timestamp": "2025-09-01T17:16:57Z",
                 "version": "1.0.0.0"
             }
