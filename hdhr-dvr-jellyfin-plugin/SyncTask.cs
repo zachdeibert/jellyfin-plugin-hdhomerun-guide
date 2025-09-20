@@ -33,6 +33,8 @@ public class SyncTask(IConfigurationManager config, IHttpClientFactory httpClien
             };
             if (dir == null) {
                 logger.LogError("Series {SeriesName} has unknown type {Category}", episode.Item1.Title, episode.Item1.Category);
+            } else if (dir == "") {
+                logger.LogInformation("Skipping download of {SeriesName} episode {EpisodeNumber} due to not being configured", episode.Item1.Title, episode.Item2.EpisodeNumber);
             } else if (episode.Item2.PlayURL == null) {
                 logger.LogError("Series {SeriesName} episode {EpisodeNumber} has no download URL", episode.Item1.Title, episode.Item2.EpisodeNumber);
             } else if (episode.Item2.RecordEndTime == 0 || episode.Item2.RecordEndTime + 30 > DateTimeOffset.UtcNow.ToUnixTimeSeconds()) {
