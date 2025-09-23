@@ -1,4 +1,7 @@
-namespace Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.Dtos;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Api.Dtos;
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 internal class DiscoverResponse {
     public string? FriendlyName { get; set; }
@@ -14,4 +17,7 @@ internal class DiscoverResponse {
     public string? StorageURL { get; set; }
     public long TotalSpace { get; set; }
     public long FreeSpace { get; set; }
+
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? ExtraFields { get; set; }
 }

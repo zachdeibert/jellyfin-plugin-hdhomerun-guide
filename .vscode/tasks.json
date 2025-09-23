@@ -59,13 +59,14 @@
             "command": "cp",
             "windows": {
                 "args": [
-                    "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.dll",
+                    "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Api.dll,hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.dll",
                     "${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin/"
                 ]
             },
             "linux": {
                 "args": [
                     "-r",
+                    "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Api.dll",
                     "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.dll",
                     "${config:jellyfinLinuxDataDir}/plugins/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin/"
                 ]
@@ -78,13 +79,14 @@
             "command": "cp",
             "windows": {
                 "args": [
-                    "hdhr-guide-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.dll",
+                    "hdhr-guide-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Api.dll,hdhr-guide-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.dll",
                     "${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin/"
                 ]
             },
             "linux": {
                 "args": [
                     "-r",
+                    "hdhr-guide-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Api.dll",
                     "hdhr-guide-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.dll",
                     "${config:jellyfinLinuxDataDir}/plugins/Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin/"
                 ]

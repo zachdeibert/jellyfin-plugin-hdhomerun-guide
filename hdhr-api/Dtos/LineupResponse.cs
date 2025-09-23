@@ -1,4 +1,7 @@
-namespace Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.Listings;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Api.Dtos;
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 internal class LineupResponse {
     public string? GuideNumber { get; set; }
@@ -9,4 +12,7 @@ internal class LineupResponse {
     public int SignalStrength { get; set; }
     public int SignalQuality { get; set; }
     public string? URL { get; set; }
+
+    [JsonExtensionData]
+    public Dictionary<string, JsonElement>? ExtraFields { get; set; }
 }

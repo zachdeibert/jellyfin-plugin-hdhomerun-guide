@@ -1,4 +1,4 @@
-namespace Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.Dtos;
+namespace Com.ZachDeibert.MediaTools.Hdhr.Api.Dtos;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;

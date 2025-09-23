@@ -2,9 +2,9 @@ namespace Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.Listings;
 
 using System;
 using System.Collections.Generic;
-using System.Net.Http.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Com.ZachDeibert.MediaTools.Hdhr.Api;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.LiveTv;
@@ -13,7 +13,6 @@ using MediaBrowser.Model.LiveTv;
 using Microsoft.Extensions.Logging;
 
 public class HDHomeRun(IConfigurationManager config, IHttpClientFactory httpClientFactory, ILogger<HDHomeRun> logger) : IListingsProvider {
-    private static readonly DateTime Epoch = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
     public string Name => "HDHomeRun";
 
     public string Type => "hdhomerun";
@@ -71,78 +70,58 @@ public class HDHomeRun(IConfigurationManager config, IHttpClientFactory httpClie
     }
 
     private async Task<IEnumerable<ListingChannel>> LoadListings(ListingsProviderInfo info, string ip, CancellationToken cancellationToken) {
-        if (!ip.StartsWith("http://")) {
-            ip = "http://" + ip;
-        }
         using HttpClient httpClient = httpClientFactory.CreateClient(NamedClient.Default);
-        DiscoverResponse? discovery;
-        using (HttpResponseMessage response = await httpClient.GetAsync(ip + "/discover.json", HttpCompletionOption.ResponseContentRead, cancellationToken)) {
-            discovery = await response.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<DiscoverResponse>(cancellationToken);
-            if (discovery == null || discovery.DeviceAuth == null || discovery.LineupURL == null) {
-                logger.LogWarning("Unable to connect to HDHomeRun device at {Ip}", ip);
-                return [];
-            }
+        Tuner? tuner = await new TunerRef(ip).Discover(httpClient, logger, cancellationToken);
+        if (tuner == null) {
+            logger.LogWarning("Unable to connect to HDHomeRun device at {Ip}", ip);
+            return [];
         }
-        logger.LogTrace("Discovered HDHomeRun with lineup at {Url} and auth token {Token}", discovery.LineupURL, discovery.DeviceAuth);
-        LineupResponse[]? lineup;
-        using (HttpResponseMessage response = await httpClient.GetAsync(discovery.LineupURL, HttpCompletionOption.ResponseContentRead, cancellationToken)) {
-            lineup = await response.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<LineupResponse[]>(cancellationToken);
-            if (lineup == null) {
-                logger.LogWarning("Unable to get lineup data from HDHomeRun device at {Ip}", ip);
-                lineup = [];
-            }
-        }
+        logger.LogTrace("Discovered HDHomeRun with lineup at {Url} and auth token {Token}", tuner.LineupUrl, tuner.DeviceAuth);
+        Channel[] lineup = [.. await tuner.GetLineup(httpClient, logger, cancellationToken)];
         if (logger.IsEnabled(LogLevel.Trace)) {
-            foreach (LineupResponse l in lineup) {
-                logger.LogTrace("Discovered HDHomeRun lineup {GuideNumber} ({GuideName}) with codec {VideoCodec}/{AudioCodec} (HD={HD})", l.GuideNumber, l.GuideName, l.VideoCodec, l.AudioCodec, l.HD);
+            foreach (Channel c in lineup) {
+                logger.LogTrace("Discovered HDHomeRun lineup {GuideNumber} ({GuideName}) with codec {VideoCodec}/{AudioCodec} (HD={IsHd})", c.GuideNumber, c.GuideName, c.VideoCodec, c.AudioCodec, c.IsHd);
             }
         }
-        GuideResponse[]? guide;
-        using (HttpResponseMessage response = await httpClient.GetAsync("https://api.hdhomerun.com/api/guide.php?DeviceAuth=" + discovery.DeviceAuth, HttpCompletionOption.ResponseContentRead, cancellationToken)) {
-            guide = await response.EnsureSuccessStatusCode().Content.ReadFromJsonAsync<GuideResponse[]>(cancellationToken);
-            if (guide == null) {
-                logger.LogWarning("Unable to connect to HDHomeRun API");
-                return [];
-            }
-        }
+        GuideChannel[] guide = [.. await tuner.GetGuide(httpClient, logger, cancellationToken)];
         if (logger.IsEnabled(LogLevel.Trace)) {
-            foreach (GuideResponse g in guide) {
-                logger.LogTrace("Discovered HDHomeRun guide for {GuideNumber} ({GuideName}): {ImageURL}", g.GuideNumber, g.GuideName, g.ImageURL);
-                foreach (GuideEntry e in g.Guide) {
-                    logger.LogTrace("Guide has entry {StartTime} - {EndTime} (orig {OriginalAirtime}): {SeriesID}.{EpisodeNumber}", e.StartTime, e.EndTime, e.OriginalAirdate, e.SeriesID, e.EpisodeNumber);
-                    logger.LogTrace("Show: {Title}: {ImageURL} ({Filter})", e.Title, e.ImageURL, e.Filter);
-                    logger.LogTrace("Episode: {EpisodeTitle} ({Synopsis})", e.EpisodeTitle, e.Synopsis);
+            foreach (GuideChannel c in guide) {
+                logger.LogTrace("Discovered HDHomeRun guide for {GuideNumber} ({GuideName}): {ImageUrl}", c.GuideNumber, c.GuideName, c.ImageUrl);
+                foreach (GuideProgram p in c.Programs) {
+                    logger.LogTrace("Guide has entry {StartTime} - {EndTime} (orig {OriginalAirtime}): {SeriesId}.{EpisodeNumber}", p.StartTime, p.EndTime, p.OriginalAirdate, p.SeriesId, p.EpisodeNumber);
+                    logger.LogTrace("Show: {Title}: {ImageUrl} ({Categories})", p.Title, p.ImageUrl, p.Categories);
+                    logger.LogTrace("Episode: {EpisodeTitle} ({Synopsis})", p.EpisodeTitle, p.Synopsis);
                 }
             }
         }
-        return guide.Join(lineup, r => r.GuideNumber, l => l.GuideNumber, (guide, lineup) => (guide, lineup)).Select(d => new ListingChannel {
+        return guide.Join(lineup, c => c.GuideNumber, c => c.GuideNumber, (guide, lineup) => (guide, lineup)).Select(d => new ListingChannel {
             Channel = {
-                Name = d.guide.GuideName ?? d.lineup?.GuideName,
+                Name = d.guide.GuideName,
                 Number = d.guide.GuideNumber,
-                Id = d.guide.GuideNumber == null ? null : "hdhr_" + d.guide.GuideNumber,
+                Id = $"hdhr_{d.guide.GuideNumber}",
                 ChannelType = ChannelType.TV,
-                ImageUrl = d.guide.ImageURL,
-                IsHD = d.lineup?.HD == 1,
-                AudioCodec = d.lineup?.AudioCodec,
-                VideoCodec = d.lineup?.VideoCodec
+                ImageUrl = d.guide.ImageUrl,
+                IsHD = d.lineup.IsHd,
+                AudioCodec = d.lineup.AudioCodec,
+                VideoCodec = d.lineup.VideoCodec,
             },
-            Programs = [.. d.guide.Guide.Select(entry => new ProgramInfo {
-                Id = string.Join("-", new string?[] {entry.SeriesID, entry.EpisodeNumber }.Where(e => e != null)),
-                ChannelId = d.guide.GuideNumber == null ? null : "hdhr_" + d.guide.GuideNumber,
+            Programs = [.. d.guide.Programs.Select(entry => new ProgramInfo {
+                Id = string.Join("-", new string?[] {entry.SeriesId, entry.EpisodeNumber}.Where(e => e != null)),
+                ChannelId = $"hdhr_{d.guide.GuideNumber}",
                 Name = entry.Title,
                 Overview = entry.Synopsis,
-                StartDate = Epoch.AddSeconds(entry.StartTime),
-                EndDate = Epoch.AddSeconds(entry.EndTime),
-                Genres = [.. entry.Filter],
-                OriginalAirDate = Epoch.AddSeconds(entry.OriginalAirdate),
-                IsHD = d.lineup?.HD == 1,
+                StartDate = entry.StartTime.DateTime,
+                EndDate = entry.EndTime.DateTime,
+                Genres = [.. entry.Categories],
+                OriginalAirDate = entry.OriginalAirdate.DateTime,
+                IsHD = d.lineup.IsHd,
                 EpisodeTitle = entry.EpisodeTitle,
-                ImageUrl = entry.ImageURL,
-                IsMovie = entry.Filter.Any(f => info.MovieCategories.Contains(f.ToLower())),
-                IsSports = entry.Filter.Any(f => info.SportsCategories.Contains(f.ToLower())),
-                IsNews = entry.Filter.Any(f => info.NewsCategories.Contains(f.ToLower())),
-                IsKids = entry.Filter.Any(f => info.KidsCategories.Contains(f.ToLower())),
-                SeriesId = entry.SeriesID,
+                ImageUrl = entry.ImageUrl,
+                IsMovie = entry.Categories.Any(c => info.MovieCategories.Contains(c.ToLower())),
+                IsSports = entry.Categories.Any(c => info.SportsCategories.Contains(c.ToLower())),
+                IsNews = entry.Categories.Any(c => info.NewsCategories.Contains(c.ToLower())),
+                IsKids = entry.Categories.Any(c => info.KidsCategories.Contains(c.ToLower())),
+                SeriesId = entry.SeriesId,
                 SeasonNumber = entry.EpisodeNumber == null ? null : int.Parse(new string([.. entry.EpisodeNumber.Skip(1).TakeWhile(c => c != 'E')])),
                 EpisodeNumber = entry.EpisodeNumber == null ? null : int.Parse(new string([.. entry.EpisodeNumber.SkipWhile(c => c != 'E').Skip(1)])),
             })],

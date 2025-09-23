@@ -2,6 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.ZachDeibert.MediaTools.Hdhr.Api", "hdhr-api\Com.ZachDeibert.MediaTools.Hdhr.Api.csproj", "{71AF1F52-9F06-4658-BB2B-AA0B190F1CC9}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin", "hdhr-dvr-jellyfin-plugin\Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.csproj", "{39256FA2-B8E3-47EB-ADDC-FE2BE2E88BEF}"
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin", "hdhr-guide-jellyfin-plugin\Com.ZachDeibert.MediaTools.Hdhr.Guide.Jellyfin.csproj", "{5A733CA5-E84B-4298-103B-8848A2805706}"
 EndProject
@@ -11,6 +12,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{71AF1F52-9F06-4658-BB2B-AA0B190F1CC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71AF1F52-9F06-4658-BB2B-AA0B190F1CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71AF1F52-9F06-4658-BB2B-AA0B190F1CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71AF1F52-9F06-4658-BB2B-AA0B190F1CC9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{39256FA2-B8E3-47EB-ADDC-FE2BE2E88BEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{39256FA2-B8E3-47EB-ADDC-FE2BE2E88BEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{39256FA2-B8E3-47EB-ADDC-FE2BE2E88BEF}.Release|Any CPU.ActiveCfg = Release|Any CPU

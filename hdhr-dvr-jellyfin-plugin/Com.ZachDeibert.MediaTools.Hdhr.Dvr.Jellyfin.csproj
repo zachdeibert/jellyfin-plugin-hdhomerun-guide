@@ -10,6 +10,9 @@
         <PackageReference Include="Jellyfin.Model" Version="10.10.7" />
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\hdhr-api\Com.ZachDeibert.MediaTools.Hdhr.Api.csproj" />
+    </ItemGroup>
+    <ItemGroup>
         <None Remove="Configuration\configPage.html" />
         <EmbeddedResource Include="Configuration\configPage.html" />
     </ItemGroup>
