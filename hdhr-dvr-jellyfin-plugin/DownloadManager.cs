@@ -1,6 +1,6 @@
 namespace Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin;
 
-using Com.ZachDeibert.MediaTools.Hdhr.Api;
+using Com.ZachDeibert.MediaTools.Hdhr.Dvr.Core;
 using Microsoft.Extensions.Logging;
 
 public class DownloadManager(HttpClient httpClient, ILogger<DownloadManager>? logger = null) {
@@ -16,24 +16,25 @@ public class DownloadManager(HttpClient httpClient, ILogger<DownloadManager>? lo
         }
     }
 
-    private readonly List<(Recording, string, long)> Downloads = [];
+    private readonly List<(Context, Episode, string)> Downloads = [];
     private long TotalSize = 0;
 
-    public async Task Add(Recording recording, string path, CancellationToken cancellationToken = default) {
-        long size = await recording.GetFileSize(httpClient, logger, cancellationToken);
-        Downloads.Add((recording, path, size));
-        TotalSize += size;
+    public async Task Add(Context context, Episode episode, string path, CancellationToken cancellationToken = default) {
+        TotalSize += await episode.Metadata!.GetFileSize(httpClient, logger, cancellationToken);
+        Downloads.Add((context, episode, path));
     }
 
     public async Task Run(IProgress<double> progress, CancellationToken cancellationToken = default) {
         long previousDownloaded = 0;
-        foreach ((Recording, string, long) download in Downloads) {
+        foreach ((Context, Episode, string) download in Downloads) {
             ProgressHelper helper = new() {
                 Parent = progress,
                 PreviousProgress = previousDownloaded,
                 TotalProgress = TotalSize,
             };
-            await download.Item1.Download(download.Item2, httpClient, helper, logger, cancellationToken);
+            await download.Item2.Metadata!.Download(download.Item3, httpClient, helper, logger, cancellationToken);
+            download.Item2.DownloadInterrupted = false;
+            _ = await download.Item1.SaveChangesAsync(cancellationToken);
             previousDownloaded += helper.Progress;
         }
     }

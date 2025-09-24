@@ -11,6 +11,7 @@
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\hdhr-api\Com.ZachDeibert.MediaTools.Hdhr.Api.csproj" />
+        <ProjectReference Include="..\hdhr-dvr-core\Com.ZachDeibert.MediaTools.Hdhr.Dvr.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Remove="Configuration\configPage.html" />

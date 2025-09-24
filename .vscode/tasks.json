@@ -59,7 +59,7 @@
             "command": "cp",
             "windows": {
                 "args": [
-                    "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Api.dll,hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.dll",
+                    "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Api.dll,hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Core.dll,hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.dll",
                     "${config:jellyfinWindowsDataDir}/plugins/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin/"
                 ]
             },
@@ -67,6 +67,7 @@
                 "args": [
                     "-r",
                     "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Api.dll",
+                    "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Core.dll",
                     "hdhr-dvr-jellyfin-plugin/bin/Debug/net8.0/publish/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.dll",
                     "${config:jellyfinLinuxDataDir}/plugins/Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin/"
                 ]
