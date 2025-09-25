@@ -42,6 +42,49 @@
                             </button>
                         </div>
                     </div>
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="HdhrDvrDeletePolicy">
+                            Delete recordings off HDHomeRun tuner...
+                        </label>
+                        <select class="emby-select emby-select-withcolor" id="HdhrDvrDeletePolicy" is="emby-select"
+                            label="Delete recordings off HDHomeRun tuner...">
+                            <option value="Never">Never</option>
+                            <option value="AfterDeleted">If the recordings are deleted on Jellyfin</option>
+                            <option value="AfterOneWeek">One week after successfully downloading to Jellyfin</option>
+                            <option value="AfterOneDay">One day after successfully downloading to Jellyfin</option>
+                            <option value="AfterDownload">
+                                Immediately after successfully downloading to Jellyfin
+                            </option>
+                        </select>
+                        <div class="fieldDescription">
+                            Specify when to delete the recordings on the HDHomeRun's storage device after downloading
+                            them to Jellyfin.
+                        </div>
+                        <div class="selectArrowContainer">
+                            <span aria-hidden="true" class="keyboard_arrow_down material-icons selectArrow"></span>
+                        </div>
+                    </div>
+                    <div class="selectContainer">
+                        <label class="selectLabel" for="HdhrDvrReRecordPolicy">
+                            Allow the HDHomeRun tuner to re-record an episode...
+                        </label>
+                        <select class="emby-select emby-select-withcolor" id="HdhrDvrReRecordPolicy" is="emby-select"
+                            label="Allow the HDHomeRun tuner to re-record an episode...">
+                            <option value="Always">Always</option>
+                            <option value="OnRecordingError">If the existing recording is not full length</option>
+                            <option value="IfDeleted">
+                                If the recording was deleted on Jellyfin before deleting on the HDHomeRun
+                            </option>
+                            <option value="Never">Never</option>
+                        </select>
+                        <div class="fieldDescription">
+                            Specify if the HDHomeRun tuner should be allowed to re-record the same episode after the
+                            episode is deleted from the HDHomeRun's storage device.
+                        </div>
+                        <div class="selectArrowContainer">
+                            <span aria-hidden="true" class="keyboard_arrow_down material-icons selectArrow"></span>
+                        </div>
+                    </div>
                     <div>
                         <button class="block emby-button raised" id="HdhrDvrSyncButton" is="emby-button" type="button">
                             <span>Sync Now</span>
@@ -69,6 +112,8 @@
                 ApiClient.getPluginConfiguration(pluginId).then(config => {
                     this.querySelector("#HdhrDvrMovieRecordingPath").value = config.MovieRecordingPath;
                     this.querySelector("#HdhrDvrSeriesRecordingPath").value = config.SeriesRecordingPath;
+                    this.querySelector("#HdhrDvrDeletePolicy").value = config.DeletePolicy;
+                    this.querySelector("#HdhrDvrReRecordPolicy").value = config.ReRecordPolicy;
                     Dashboard.hideLoadingMsg();
                 });
             }).on("submit", "#HdhrDvrConfigForm", function (ev) {
@@ -76,6 +121,8 @@
                 ApiClient.getPluginConfiguration(pluginId).then(config => {
                     config.MovieRecordingPath = this.querySelector("#HdhrDvrMovieRecordingPath").value;
                     config.SeriesRecordingPath = this.querySelector("#HdhrDvrSeriesRecordingPath").value;
+                    config.DeletePolicy = this.querySelector("#HdhrDvrDeletePolicy").value;
+                    config.ReRecordPolicy = this.querySelector("#HdhrDvrReRecordPolicy").value;
                     ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
                 });
                 ev.preventDefault();
