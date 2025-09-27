@@ -114,7 +114,7 @@ public class SyncTask(IConfigurationManager config, IHttpClientFactory httpClien
         await downloadManager.Run(progress, cancellationToken);
         if (!cancellationToken.IsCancellationRequested) {
             foreach (Context library in libraries.Values) {
-                IQueryable<Episode> allEpisodes = library.Episodes.Where(e => e.DownloadInterrupted == false && e.DeleteReason == DeleteReason.NotDeleted);
+                IQueryable<Episode> allEpisodes = library.Episodes.Where(e => e.DownloadInterrupted == false && e.DeleteReason == DeleteReason.NotDeleted).Include(e => e.Series);
                 IEnumerable<Episode>? delete = null;
                 switch (Plugin.Instance?.Configuration.DeletePolicy) {
                     case DeletePolicy.AfterDeleted:

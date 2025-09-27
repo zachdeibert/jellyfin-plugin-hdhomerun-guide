@@ -1,5 +1,6 @@
 namespace Com.ZachDeibert.MediaTools.Hdhr.Api;
 
+using System.Net;
 using Microsoft.Extensions.Logging;
 
 public record class Recording {
@@ -38,10 +39,15 @@ public record class Recording {
         return (long) size;
     }
 
-    public async Task Delete(bool rerecord, HttpClient client, CancellationToken cancellationToken = default) {
+    public async Task<bool> Delete(bool rerecord, HttpClient client, CancellationToken cancellationToken = default) {
         string url = $"{CmdUrl}{(CmdUrl.Contains('?') ? '&' : '?')}cmd=delete&rerecord={(rerecord ? 1 : 0)}";
         using HttpResponseMessage response = await client.PostAsync(url, null, cancellationToken);
-        _ = response.EnsureSuccessStatusCode();
+        if (response.StatusCode == HttpStatusCode.BadRequest) {
+            return false;
+        } else {
+            _ = response.EnsureSuccessStatusCode();
+            return true;
+        }
     }
 
     public async Task Download(string path, HttpClient client, IProgress<long>? progress = null, ILogger? logger = null, CancellationToken cancellationToken = default) {

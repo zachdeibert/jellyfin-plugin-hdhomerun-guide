@@ -7,4 +7,5 @@ public enum DeleteReason {
     OneDayPassed,
     OneWeekPassed,
     Deleted,
+    RemoteDeleted,
 }

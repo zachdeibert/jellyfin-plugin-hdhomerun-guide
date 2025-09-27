@@ -24,7 +24,9 @@ public record class DownloadJob {
         logger?.LogInformation("Deleting {SeriesName} episode {EpisodeNumber}", Episode.Series!.Metadata!.Title, Episode.Metadata!.EpisodeNumber);
         Episode.DeleteReason = reason;
         Episode.ReRecordable = ShouldReRecord;
-        await Episode.Metadata!.Delete(Episode.ReRecordable, client, cancellationToken);
+        if (!await Episode.Metadata!.Delete(Episode.ReRecordable, client, cancellationToken)) {
+            Episode.DeleteReason = DeleteReason.RemoteDeleted;
+        }
         _ = await Db.SaveChangesAsync(cancellationToken);
     }
 
