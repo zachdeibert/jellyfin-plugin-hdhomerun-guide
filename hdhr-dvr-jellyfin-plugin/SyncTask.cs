@@ -149,6 +149,29 @@ public class SyncTask(IConfigurationManager config, IHttpClientFactory httpClien
                         }, httpClient, downloadLogger, cancellationToken);
                     }
                 }
+                foreach (Series series in library.Series) {
+                    string? seriesDir = series.FilePath();
+                    if (seriesDir != null) {
+                        string thumbnailPath = Path.Join(seriesDir, "thumbnail" + Path.GetExtension(series.Metadata!.ImageUrl));
+                        if (File.Exists(thumbnailPath)) {
+                            logger.LogTrace("Thumbnail file {Path} already exists", thumbnailPath);
+                        } else {
+                            logger.LogInformation("Downloading {Path} from {Url}", thumbnailPath, series.Metadata.ImageUrl);
+                            using HttpResponseMessage response = await httpClient.GetAsync(series.Metadata.ImageUrl, HttpCompletionOption.ResponseContentRead, cancellationToken);
+                            await File.WriteAllBytesAsync(thumbnailPath, await response.EnsureSuccessStatusCode().Content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
+                        }
+                        if (series.Metadata.PosterUrl != null) {
+                            string coverPath = Path.Join(seriesDir, "cover" + Path.GetExtension(series.Metadata.PosterUrl));
+                            if (File.Exists(coverPath)) {
+                                logger.LogTrace("Cover file {Path} already exists", coverPath);
+                            } else {
+                                logger.LogInformation("Downloading {Path} from {Url}", coverPath, series.Metadata.PosterUrl);
+                                using HttpResponseMessage response = await httpClient.GetAsync(series.Metadata.PosterUrl, HttpCompletionOption.ResponseContentRead, cancellationToken);
+                                await File.WriteAllBytesAsync(coverPath, await response.EnsureSuccessStatusCode().Content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
+                            }
+                        }
+                    }
+                }
             }
         }
     }
