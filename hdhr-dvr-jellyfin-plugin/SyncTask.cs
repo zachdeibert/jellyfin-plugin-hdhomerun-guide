@@ -4,9 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Com.ZachDeibert.MediaTools.Hdhr.Api;
 using Com.ZachDeibert.MediaTools.Hdhr.Dvr.Core;
 using Com.ZachDeibert.MediaTools.Hdhr.Dvr.Core.Configuration;
+using Com.ZachDeibert.MediaTools.Hdhr.Dvr.Core.Metadata;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Model.LiveTv;
@@ -169,6 +171,46 @@ public class SyncTask(IConfigurationManager config, IHttpClientFactory httpClien
                                 using HttpResponseMessage response = await httpClient.GetAsync(series.Metadata.PosterUrl, HttpCompletionOption.ResponseContentRead, cancellationToken);
                                 await File.WriteAllBytesAsync(coverPath, await response.EnsureSuccessStatusCode().Content.ReadAsByteArrayAsync(cancellationToken), cancellationToken);
                             }
+                        }
+                    }
+                }
+            }
+            if (libraries.TryGetValue(RecordingCategory.Movie, out Context? moviesDb)) {
+                XmlSerializer movieXml = new(typeof(Movie));
+                foreach (Episode episode in moviesDb.Episodes.Where(e => !e.DownloadInterrupted).Include(e => e.Series)) {
+                    string? episodePath = episode.FilePath(false);
+                    string? nfoPath = Path.ChangeExtension(episodePath, "nfo");
+                    if (episodePath != null && File.Exists(episodePath) && nfoPath != null && !File.Exists(nfoPath)) {
+                        logger.LogInformation("Creating NFO file {Path}", nfoPath);
+                        using StreamWriter stream = File.CreateText(nfoPath);
+                        movieXml.Serialize(stream, new Movie(episode));
+                    }
+                }
+            }
+            if (libraries.TryGetValue(RecordingCategory.Series, out Context? seriesDb)) {
+                XmlSerializer episodeDetailsXml = new(typeof(EpisodeDetails));
+                XmlSerializer seasonXml = new(typeof(Season));
+                XmlSerializer tvShowXml = new(typeof(TvShow));
+                foreach (Episode episode in seriesDb.Episodes.Where(e => !e.DownloadInterrupted).Include(e => e.Series)) {
+                    string? episodePath = episode.FilePath(false);
+                    if (episodePath != null && File.Exists(episodePath)) {
+                        string? episodeNfoPath = Path.ChangeExtension(episodePath, "nfo");
+                        string? seasonNfoPath = episode.Metadata!.EpisodeNumber == null ? null : Path.Join(Path.GetDirectoryName(episodeNfoPath), "season.nfo");
+                        string? tvShowNfoPath = Path.Join(Path.GetDirectoryName(Path.GetDirectoryName(seasonNfoPath) ?? episodeNfoPath), "tvshow.nfo");
+                        if (tvShowNfoPath != null && !File.Exists(tvShowNfoPath)) {
+                            logger.LogInformation("Creating NFO file {Path}", tvShowNfoPath);
+                            using StreamWriter stream = File.CreateText(tvShowNfoPath);
+                            tvShowXml.Serialize(stream, new TvShow(episode.Series!));
+                        }
+                        if (seasonNfoPath != null && !File.Exists(seasonNfoPath)) {
+                            logger.LogInformation("Creating NFO file {Path}", seasonNfoPath);
+                            using StreamWriter stream = File.CreateText(seasonNfoPath);
+                            seasonXml.Serialize(stream, new Season(new EpisodeNumber(episode.Metadata.EpisodeNumber!).Season));
+                        }
+                        if (episodeNfoPath != null && !File.Exists(episodeNfoPath)) {
+                            logger.LogInformation("Creating NFO file {Path}", episodeNfoPath);
+                            using StreamWriter stream = File.CreateText(episodeNfoPath);
+                            episodeDetailsXml.Serialize(stream, new EpisodeDetails(episode));
                         }
                     }
                 }
