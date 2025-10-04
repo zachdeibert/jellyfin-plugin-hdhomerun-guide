@@ -152,8 +152,8 @@ public class SyncTask(IConfigurationManager config, IHttpClientFactory httpClien
                     }
                 }
                 foreach (Series series in library.Series) {
-                    string? seriesDir = series.FilePath();
-                    if (seriesDir != null) {
+                    string? seriesDir = series.FilePath(false);
+                    if (seriesDir != null && Directory.Exists(seriesDir)) {
                         string thumbnailPath = Path.Join(seriesDir, "thumbnail" + Path.GetExtension(series.Metadata!.ImageUrl));
                         if (File.Exists(thumbnailPath)) {
                             logger.LogTrace("Thumbnail file {Path} already exists", thumbnailPath);
