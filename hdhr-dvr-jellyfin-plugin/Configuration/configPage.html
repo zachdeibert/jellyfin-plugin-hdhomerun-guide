@@ -103,11 +103,13 @@
             const pluginId = "EB540661-5435-406D-8A92-F7D8474D247C";
             $(document).on("pageshow", "#HdhrDvrConfigPage", function () {
                 Dashboard.showLoadingMsg();
-                TaskButton({
-                    "button": this.querySelector("#HdhrDvrSyncButton"),
-                    "mode": "on",
-                    "progressElem": this.querySelector("#HdhrDvrSyncProgress"),
-                    "taskKey": "Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.SyncTask",
+                pluginImport("scripts/taskbutton").then(TaskButton => {
+                    TaskButton.default({
+                        "button": this.querySelector("#HdhrDvrSyncButton"),
+                        "mode": "on",
+                        "progressElem": this.querySelector("#HdhrDvrSyncProgress"),
+                        "taskKey": "Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.SyncTask",
+                    });
                 });
                 ApiClient.getPluginConfiguration(pluginId).then(config => {
                     this.querySelector("#HdhrDvrMovieRecordingPath").value = config.MovieRecordingPath;
@@ -128,24 +130,28 @@
                 ev.preventDefault();
                 return false;
             }).on("pagehide", "#HdhrDvrConfigPage", function () {
-                TaskButton({
-                    "button": this.querySelector("#HdhrDvrSyncButton"),
-                    "mode": "off",
-                    "progressElem": this.querySelector("#HdhrDvrSyncProgress"),
-                    "taskKey": "Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.SyncTask",
+                pluginImport("scripts/taskbutton").then(TaskButton => {
+                    TaskButton.default({
+                        "button": this.querySelector("#HdhrDvrSyncButton"),
+                        "mode": "off",
+                        "progressElem": this.querySelector("#HdhrDvrSyncProgress"),
+                        "taskKey": "Com.ZachDeibert.MediaTools.Hdhr.Dvr.Jellyfin.SyncTask",
+                    });
                 });
             });
             ["HdhrDvrMovieRecordingPath", "HdhrDvrSeriesRecordingPath"].forEach(id => {
                 $(document).on("click", "#" + id + "Select", () => {
-                    const picker = new DirectoryBrowser();
-                    picker.show({
-                        "callback": path => {
-                            if (path) {
-                                document.querySelector("#" + id).value = path;
-                            }
-                            picker.close();
-                        },
-                        "path": document.querySelector("#" + id).value,
+                    pluginImport("components/directorybrowser/directorybrowser").then(DirectoryBrowser => {
+                        const picker = new DirectoryBrowser.default();
+                        picker.show({
+                            "callback": path => {
+                                if (path) {
+                                    document.querySelector("#" + id).value = path;
+                                }
+                                picker.close();
+                            },
+                            "path": document.querySelector("#" + id).value,
+                        });
                     });
                 });
             });
